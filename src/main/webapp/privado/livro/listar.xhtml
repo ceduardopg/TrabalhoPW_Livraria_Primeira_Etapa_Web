@@ -15,8 +15,48 @@
                                  update="formEdicao"
                                  process="@this"
                                  oncomplete="PF('dlg').show();"/>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem:"/>
+                        <p:selectOneMenu value="#{controleLivro.dao.ordemAtual}"
+                                         converter="#{controleLivro.dao.converterOrdem}">
+                            <f:selectItems value="#{controleLivro.dao.listaOrdem}"
+                                var="ord" itemValue="#{ord.atributo}"/>
+                            <p:ajax update="listagem"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Filtro:"/>
+                        <p:inputText value="#{controleLivro.dao.filtro}">
+                          
+                        </p:inputText>
+                        <p:commandButton value="Filtrar" update="listagem"/>
+                        <p:outputLabel value="Máximo de objetos"/>
+                        <p:selectOneMenu value="#{controleLivro.dao.maximoObjetos}">
+                            <f:selectItem itemValue="3" itemLabel="3"/>
+                            <f:selectItem itemValue="5" itemLabel="5"/>
+                            <f:selectItem itemValue="10" itemLabel="10"/>
+                            <f:selectItem itemValue="20" itemLabel="20"/>
+                            <f:selectItem itemValue="50" itemLabel="50"/>
+                            <p:ajax update="listagem"/>
+                        </p:selectOneMenu>
+                        <p:commandButton action="#{controleLivro.dao.primeiro()}"
+                                         title="Primeiro" update="listagem"
+                                         icon="pi pi-step-backward"/>
+                        <p:commandButton action="#{controleLivro.dao.anterior()}"
+                                         title="Anterior" update="listagem"
+                                         icon="pi pi-chevron-left"/>  
+                        <p:commandButton action="#{controleLivro.dao.proximo()}"
+                                         title="Proximo" update="listagem"
+                                         icon="pi pi-chevron-right"/>                         
+                        <p:commandButton action="#{controleLivro.dao.ultimo()}"
+                                         title="Ultimo" update="listagem"
+                                         icon="pi pi-step-forward"/>                        
+                    </p:panelGrid>
+                </div>
                 <p:dataTable value="#{controleLivro.dao.listaObjetos}" var="obj"
                              id="listagem">
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{controleLivro.dao.mensagemNavegacao}"/>
+                    </f:facet>
                     <p:column headerText="Codigo de barras">
                         <p:outputLabel value="#{obj.codigoBarras}"/>
                     </p:column>
@@ -32,14 +72,26 @@
                     <p:column headerText="Valor">
                         <p:outputLabel value="#{obj.valor}"/>
                     </p:column> 
+                    <p:column headerText="ISBN">
+                        <p:outputLabel value="#{obj.isbn}"/>
+                    </p:column> 
+                    <p:column headerText="Titulo">
+                        <p:outputLabel value="#{obj.titulo}"/>
+                    </p:column> 
+                    <p:column headerText="Resumo">
+                        <p:outputLabel value="#{obj.resumo}"/>
+                    </p:column> 
+                    <p:column headerText="Editora">
+                        <p:outputLabel value="#{obj.editora}"/>
+                    </p:column> 
+                    <p:column headerText="Publicação">
+                        <p:outputLabel value="#{obj.dataPublicacao}"/>
+                    </p:column> 
                     <p:column headerText="Idioma">
                         <p:outputLabel value="#{obj.idioma.nome}"/>
                     </p:column> 
                      <p:column headerText="Formato">
                         <p:outputLabel value="#{obj.formato.nome}"/>
-                    </p:column> 
-                    <p:column headerText="ISBN">
-                        <p:outputLabel value="#{obj.isbn}"/>
                     </p:column> 
                     <p:column headerText="Ações">
                         <div align="center">
@@ -66,7 +118,7 @@
                 <h:form id="formEdicao" prependId="false">
                     <p:growl id="growl"/>
                     <div align="center">
-                        <p:panelGrid columns="2">
+                        <p:panelGrid columns="4">
                             <p:outputLabel value="Codigo de Barras" for="txtCodigoBarras"/>
                             <p:inputText value="#{controleLivro.objeto.codigoBarras}"
                                          size="50" id="txtCodigoBarras"/>
@@ -85,6 +137,27 @@
                             <p:inputText id="txtValor"
                                          value="#{controleLivro.objeto.valor}"
                                          size="8" maxlength="8"/>
+                            <p:outputLabel value="ISBN" for="txtIsbn"/>
+                            <p:inputText id="txtIsbn"
+                                         value="#{controleLivro.objeto.isbn}"
+                                         size="13" maxlength="13"/>
+                            <p:outputLabel value="Titulo" for="txtTituto"/>
+                            <p:inputText id="txtTituto"
+                                         value="#{controleLivro.objeto.titulo}"
+                                         size="13" maxlength="13"/>
+                            <p:outputLabel value="Resumo" for="txtResumo"/>
+                            <p:inputText id="txtResumo"
+                                         value="#{controleLivro.objeto.resumo}"
+                                         size="13" maxlength="13"/>
+                            <p:outputLabel value="Editora" for="txtEditora"/>
+                            <p:inputText id="txtEditora"
+                                         value="#{controleLivro.objeto.editora}"
+                                         size="13" maxlength="13"/>
+                            <p:outputLabel value="Data de Publicação" for="txtDataPublicacao"/>
+                            <p:calendar id="txtDataPublicacao" value="#{controleLivro.objeto.dataPublicacao}"
+                                        mask="true" pattern="dd/MM/yyyy" navigator="true" size="10">
+                                        <f:converter converterId="converterCalendar"/>
+                            </p:calendar>
                             <p:outputLabel value="Idioma" for="selectIdioma"/>
                             <p:selectOneMenu value="#{controleLivro.objeto.idioma}"
                                              id="selectIdioma"
@@ -108,11 +181,7 @@
                                 <f:selectItems 
                                     value="#{controleLivro.daoFormato.listaObjetos}"
                                     var="est" itemLabel="#{est.nome}"/>
-                            </p:selectOneMenu>
-                            <p:outputLabel value="ISBN" for="txtIsbn"/>
-                            <p:inputText id="txtIsbn"
-                                         value="#{controleLivro.objeto.isbn}"
-                                         size="13" maxlength="13"/>
+                            </p:selectOneMenu>                            
                         </p:panelGrid>
                     </div>
                     <p:panel>

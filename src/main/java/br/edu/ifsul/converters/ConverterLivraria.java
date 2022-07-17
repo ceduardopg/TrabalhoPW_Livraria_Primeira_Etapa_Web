@@ -1,6 +1,6 @@
 package br.edu.ifsul.converters;
 
-import br.edu.ifsul.modelo.Idioma;
+import br.edu.ifsul.modelo.Livraria;
 import java.io.Serializable;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.component.UIComponent;
@@ -14,9 +14,9 @@ import javax.persistence.PersistenceContext;
  *
  * @author Carlos
  */
-@Named(value = "converterIdioma")
+@Named(value = "converterLivraria")
 @RequestScoped
-public class ConverterIdioma implements Serializable, Converter{
+public class ConverterLivraria implements Serializable, Converter{
 
     @PersistenceContext(unitName = "LivrariaWebPU")
     private EntityManager em;
@@ -27,7 +27,7 @@ public class ConverterIdioma implements Serializable, Converter{
         if (string == null || string.equals("Selecione um registro")){
             return null;
         }
-        return em.find(Idioma.class, Integer.parseInt(string));
+        return em.find(Livraria.class, Integer.parseInt(string));
     }
 
     // converte da objeto para tela
@@ -36,7 +36,7 @@ public class ConverterIdioma implements Serializable, Converter{
         if (t == null){
             return null;
         }
-        Idioma obj = (Idioma) t;
+        Livraria obj = (Livraria) t;
         return obj.getId().toString();
     }
 

@@ -1,6 +1,6 @@
 package br.edu.ifsul.converters;
 
-import br.edu.ifsul.modelo.Idioma;
+import br.edu.ifsul.modelo.Permissao;
 import java.io.Serializable;
 import javax.enterprise.context.RequestScoped;
 import javax.faces.component.UIComponent;
@@ -10,34 +10,35 @@ import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+
 /**
  *
  * @author Carlos
  */
-@Named(value = "converterIdioma")
+@Named(value = "converterPermissao")
 @RequestScoped
-public class ConverterIdioma implements Serializable, Converter{
+public class ConverterPermissao implements Serializable, Converter {
 
     @PersistenceContext(unitName = "LivrariaWebPU")
-    private EntityManager em;
+    protected EntityManager em;    
     
-    // da tela para o objeto
+    // converte da tela para o objeto
     @Override
     public Object getAsObject(FacesContext fc, UIComponent uic, String string) {
         if (string == null || string.equals("Selecione um registro")){
             return null;
         }
-        return em.find(Idioma.class, Integer.parseInt(string));
+        return em.find(Permissao.class, string);
     }
 
-    // converte da objeto para tela
+    // converte do objeto para a tela
     @Override
     public String getAsString(FacesContext fc, UIComponent uic, Object t) {
         if (t == null){
             return null;
         }
-        Idioma obj = (Idioma) t;
-        return obj.getId().toString();
+        Permissao obj = (Permissao) t;
+        return obj.getNome();
     }
 
 }

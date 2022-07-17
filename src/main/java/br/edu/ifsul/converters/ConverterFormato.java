@@ -12,9 +12,7 @@ import javax.persistence.PersistenceContext;
 
 /**
  *
- * @author Prof. Me. Jorge Luis Boeira Bavaresco
- * @email jorgebavaresco@ifsul.edu.br
- * @organization IFSUL - Campus Passo Fundo
+ * @author Carlos
  */
 @Named(value = "converterFormato")
 @RequestScoped

@@ -6,31 +6,36 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <ui:composition template="/templates/template.xhtml">
-        <ui:define name="titulo">CRUD de Autores</ui:define>
+        <ui:define name="titulo">CRUD de Livrarias</ui:define>
         <ui:define name="conteudo">
             <h:form id="formListagem" prependId="false">
                 <p:growl/>
-                <p:commandButton value="Novo" actionListener="#{controleAutor.novo()}"
+                <p:commandButton value="Novo" actionListener="#{controleLivraria.novo()}"
                                  icon="pi pi-plus"
                                  update="formEdicao"
                                  process="@this"
                                  oncomplete="PF('dlg').show();"/>
-                                <div align="center">
+                <p:commandButton value="Imprimir"
+                                 icon="pi pi-print"
+                                 action="#{controleLivraria.imprimirLivrarias()}"
+                                 ajax="false"
+                                 onclick="this.form.target = '_blank'"/>
+                <div align="center">
                     <p:panelGrid columns="11">
                         <p:outputLabel value="Ordem:"/>
-                        <p:selectOneMenu value="#{controleAutor.dao.ordemAtual}"
-                                         converter="#{controleAutor.dao.converterOrdem}">
-                            <f:selectItems value="#{controleAutor.dao.listaOrdem}"
+                        <p:selectOneMenu value="#{controleLivraria.dao.ordemAtual}"
+                                         converter="#{controleLivraria.dao.converterOrdem}">
+                            <f:selectItems value="#{controleLivraria.dao.listaOrdem}"
                                 var="ord" itemValue="#{ord.atributo}"/>
                             <p:ajax update="listagem"/>
                         </p:selectOneMenu>
                         <p:outputLabel value="Filtro:"/>
-                        <p:inputText value="#{controleAutor.dao.filtro}">
+                        <p:inputText value="#{controleLivraria.dao.filtro}">
                           
                         </p:inputText>
                         <p:commandButton value="Filtrar" update="listagem"/>
                         <p:outputLabel value="Máximo de objetos"/>
-                        <p:selectOneMenu value="#{controleAutor.dao.maximoObjetos}">
+                        <p:selectOneMenu value="#{controleLivraria.dao.maximoObjetos}">
                             <f:selectItem itemValue="3" itemLabel="3"/>
                             <f:selectItem itemValue="5" itemLabel="5"/>
                             <f:selectItem itemValue="10" itemLabel="10"/>
@@ -38,24 +43,24 @@
                             <f:selectItem itemValue="50" itemLabel="50"/>
                             <p:ajax update="listagem"/>
                         </p:selectOneMenu>
-                        <p:commandButton action="#{controleAutor.dao.primeiro()}"
+                        <p:commandButton action="#{controleLivraria.dao.primeiro()}"
                                          title="Primeiro" update="listagem"
                                          icon="pi pi-step-backward"/>
-                        <p:commandButton action="#{controleAutor.dao.anterior()}"
+                        <p:commandButton action="#{controleLivraria.dao.anterior()}"
                                          title="Anterior" update="listagem"
                                          icon="pi pi-chevron-left"/>  
-                        <p:commandButton action="#{controleAutor.dao.proximo()}"
+                        <p:commandButton action="#{controleLivraria.dao.proximo()}"
                                          title="Proximo" update="listagem"
                                          icon="pi pi-chevron-right"/>                         
-                        <p:commandButton action="#{controleAutor.dao.ultimo()}"
+                        <p:commandButton action="#{controleLivraria.dao.ultimo()}"
                                          title="Ultimo" update="listagem"
                                          icon="pi pi-step-forward"/>                        
                     </p:panelGrid>
                 </div>
-                <p:dataTable value="#{controleAutor.dao.listaObjetos}" var="obj"
+                <p:dataTable value="#{controleLivraria.dao.listaObjetos}" var="obj"
                              id="listagem">
                     <f:facet name="footer">
-                        <p:outputLabel value="#{controleAutor.dao.mensagemNavegacao}"/>
+                        <p:outputLabel value="#{controleLivraria.dao.mensagemNavegacao}"/>
                     </f:facet>
                     <p:column headerText="ID">
                         <p:outputLabel value="#{obj.id}"/>
@@ -63,59 +68,35 @@
                     <p:column headerText="Nome">
                         <p:outputLabel value="#{obj.nome}"/>
                     </p:column>     
-                    <p:column headerText="Bibliografia">
-                        <p:outputLabel value="#{obj.bibliografia}"/>
+                    <p:column headerText="Site">
+                        <p:outputLabel value="#{obj.site}"/>
                     </p:column> 
                     <p:column headerText="Ações">
                         <div align="center">
                             <p:commandButton 
-                                actionListener="#{controleAutor.alterar(obj.id)}"
+                                actionListener="#{controleLivraria.alterar(obj.id)}"
                                 icon="pi pi-pencil"
                                 title="Editar o objeto de id: #{obj.id}"
                                 update="formEdicao" process="@this"
                                 oncomplete="PF('dlg').show();"/>
                             <p:commandButton
-                                actionListener="#{controleAutor.excluir(obj.id)}"
+                                actionListener="#{controleLivraria.excluir(obj.id)}"
                                 icon="pi pi-trash"
                                 update="@form"
                                 process="@this"
                                 title="Remover o objeto de id: #{obj.id}"
               onclick="if (!confirm('Removendo o objeto de id: #{obj.id}')) return false"
                                 />
+                            <p:commandButton title="Imprimir"
+                                 icon="pi pi-print"
+                                 action="#{controleLivraria.imprimirLivraria(obj.id)}"
+                                 ajax="false"
+                                 onclick="this.form.target = '_blank'"/>
                         </div>
                     </p:column>
                 </p:dataTable>
-            </h:form>  
-            <p:dialog header="Edição" widgetVar="dlg" resizable="false"
-                modal="true" width="50%" height="100%">
-                <h:form id="formEdicao" prependId="false">
-                    <p:growl id="growl"/>
-                    <div align="center">
-                        <p:panelGrid columns="2">
-                            <p:outputLabel value="ID" for="txtId"/>
-                            <p:inputText value="#{controleAutor.objeto.id}"
-                                         readonly="true" size="5" id="txtId"/>
-                            <p:outputLabel value="Nome" for="txtNome"/>
-                            <p:inputText id="txtNome"
-                                         value="#{controleAutor.objeto.nome}"
-                                         size="40" maxlength="40"/>
-                            <p:outputLabel value="Bibliografia" for="txtBibliografia"/>
-                            <p:inputTextarea value="#{controleAutor.objeto.bibliografia}"
-                                         id="txtBibliografia"/>
-                        </p:panelGrid>
-                    </div>
-                    <p:panel>
-                        <div align="center">
-                            <p:commandButton value="Salvar"
-                                             icon="pi pi-save"
-                                             actionListener="#{controleAutor.salvar()}"
-                                             update="formEdicao formListagem"
-                oncomplete="if(!args.validationFailed){PF('dlg').hide();}"
-                                             />
-                        </div>
-                    </p:panel>
-                </h:form>
-            </p:dialog>
+            </h:form>
+            <ui:include src="formulario.xhtml"/>
         </ui:define>
     </ui:composition>
 </html>
